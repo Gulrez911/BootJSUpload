@@ -1,0 +1,75 @@
+while (itr.hasNext()) {
+					int ix = itr.next().getRowNum();
+					System.out.println(">> " + ix);
+//					if (ix == 0) {
+//						continue;
+//					}
+					Row row = itr.next();
+					Iterator<Cell> cellIterator = row.cellIterator(); // iterating over each column
+					List<String> rowContent = new ArrayList<>();
+					while (cellIterator.hasNext()) {
+						Cell cell = cellIterator.next();
+						rowContent.add(cell.getStringCellValue());
+//						if(cell.getColumnIndex()==0) {
+//							System.out.println("Cell Column0 "+cell.getColumnIndex()+">>>> ");
+//							
+//						}if(cell.getColumnIndex()==1) {
+//							System.out.println("Cell Column1 "+cell.getColumnIndex()+">>>> ");
+//						}if(cell.getColumnIndex()==2) {
+//							System.out.println("Cell Column2 "+cell.getColumnIndex()+">>>> ");
+//						}if(cell.getColumnIndex()==3) {
+//							System.out.println("Cell Column3 "+cell.getColumnIndex()+">>>> ");
+//						}if(cell.getColumnIndex()==4) {
+//							System.out.println("Cell Column4 "+cell.getColumnIndex()+">>>> ");
+//						}
+//						switch (cell.getCellType()) {
+//						case Cell.CELL_TYPE_STRING: // field that represents string cell type
+//							System.out.print(cell.getStringCellValue() + "\t\t\t");
+//							
+//							
+//							break;
+//						case Cell.CELL_TYPE_NUMERIC: // field that represents number cell type
+//							System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+//							System.out.print(cell.getNumericCellValue() + "\t\t\t");
+//							break;
+//						default:
+//						}
+					}
+
+					System.out.println("List: " + rowContent);
+					Course cs = courseRepository.findByPrimaryKey(rowContent.get(1), "ih");
+					Course cs2 = new Course();
+					if (cs == null) {
+						cs2.setCourseName(rowContent.get(1));
+						cs2.setImageUrl(rowContent.get(2));
+						cs2.setCompanyId("IH");
+						cs2.setCompanyName("IIHT");
+						courseRepository.save(cs2);
+						System.out.println("Id: " + cs2.getId());
+					}
+					LearningPath lp = learningPathRepository.findByPrimaryKey(rowContent.get(0),"ih");
+					LearningPath lp2 = new LearningPath();
+					if (lp == null) {
+						lp2.setCompanyId("IH");
+						lp2.setCompanyName("IIHT");
+						lp2.setName(rowContent.get(0));
+
+						List<Course> lis = new ArrayList<Course>();
+						lis.add(cs2);
+						lp2.setCourses(lis);
+						learningPathRepository.save(lp2);
+						System.out.println("Id: " + lp2.getId());
+					}
+					CourseModule cm = new CourseModule();
+					cm.setCompanyId("IH");
+					cm.setCompanyName("IIHT");
+					cm.setModuleName(rowContent.get(3));
+					if(cs2.getId()==null) {
+						cs2.setId(cs.getId());
+						cs2.setCourseName(cs.getCourseName());
+					}
+					cm.setCourseId(cs2.getId());
+					cm.setCourseName(cs2.getCourseName());
+					courseModuleRepository.save(cm);
+				
+}
